@@ -1,58 +1,27 @@
 
-from django.shortcuts import render,redirect
-from django.http.response import HttpResponse,JsonResponse
-# from app.models import Student
-from django.contrib.auth import authenticate, login 
-from django.contrib.auth.hashers import make_password,check_password
-from django.contrib import messages
-import json
+from django.shortcuts import render,HttpResponse,redirect
 from django.core.mail import send_mail
-import math, random
-
+from django.contrib import messages
 
 # Create your views here.
 
 
-
-def login(request):
-    return render(request, 'id/login.html')
-
-
-def welcome(request):
-    return render(request, 'id/welcome.html')
-
-def otp(request):
-    return render(request, 'id/otp.html')
-
-
-
-
-
-def generateOTP() :
-     digits = "0123456789"
-     OTP = ""
-     for i in range(4) :
-         OTP += digits[math.floor(random.random() * 10)]
-     return OTP
-
-def send_otp(request):
-     email=request.GET.get   ("email")
-     print(email)
-     o=generateOTP()
-     htmlgen = '<p>Your OTP is <strong>o</strong></p>'
-     send_mail('OTP request',o,'<your gmail id>',[email], fail_silently=False, html_message=htmlgen)
-     return HttpResponse(o)
-
-
-
-    
-
-    
+def index(request):
+    a=[]
+    if request.method == "POST":
+        name=request.POST['name']
+        email=request.POST['email']
+        message=request.POST['message']
+        subject=request.POST['subject']
+        a.append(name)
+        a.append(subject)
+        if email and message is not ' ':
+            send_mail(a,message,'rahulsinghbusiness0101@gmail.com',[email])
+            messages.success(request,'Email SENT SUCCESSFULLY CHECK YOUR MAIl')
+            return redirect('/')
+        else:
+            messages.error(request,'Email CANT SEND PLEASE FILL EMAIL IN FIELD AND MESSAGE ')
+            return redirect('/')
+    else:
         
-
-
-
-
-
-
-# Create your views here.
+        return render(request,'id/otp.html')
